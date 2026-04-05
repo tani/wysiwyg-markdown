@@ -86,11 +86,34 @@ async function main() {
 			esbuildProblemMatcherPlugin, /* add to the end of plugins array */
 		],
 	});
-	if (watch) {
-		await ctx.watch();
-	} else {
+	const vditorDist = path.join(__dirname, 'node_modules', 'vditor', 'dist');
+	const targetVditor = path.join(__dirname, 'dist', 'vditor');
+
+	const fs = require('fs');
+
+	function copyDir(src, dest) {
+		fs.mkdirSync(dest, { recursive: true });
+		let entries = fs.readdirSync(src, { withFileTypes: true });
+
+		for (let entry of entries) {
+			let srcPath = path.join(src, entry.name);
+			let destPath = path.join(dest, entry.name);
+
+			entry.isDirectory() ?
+				copyDir(srcPath, destPath) :
+				fs.copyFileSync(srcPath, destPath);
+		}
+	}
+
+	if (!watch) {
+		console.log('Copying Vditor assets...');
+		copyDir(vditorDist, targetVditor);
 		await ctx.rebuild();
 		await ctx.dispose();
+	} else {
+		console.log('Watching for changes...');
+		copyDir(vditorDist, targetVditor);
+		await ctx.watch();
 	}
 }
 

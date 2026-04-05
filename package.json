@@ -12,22 +12,28 @@
   "activationEvents": [],
   "browser": "./dist/web/extension.js",
   "contributes": {
-    "commands": [
+    "customEditors": [
       {
-        "command": "wysiwyg-markdown.helloWorld",
-        "title": "Hello World"
+        "viewType": "wysiwyg-markdown.vditor",
+        "displayName": "Vditor Markdown Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.md"
+          }
+        ],
+        "priority": "option"
       }
     ]
   },
   "scripts": {
     "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/extensionTests.js",
-    "pretest": "npm run compile-web",
-    "vscode:prepublish": "npm run package-web",
-    "compile-web": "npm run check-types && npm run lint && node esbuild.js",
+    "pretest": "bun run compile-web",
+    "vscode:prepublish": "bun run package-web",
+    "compile-web": "bun run check-types && bun run lint && bun esbuild.js",
     "watch-web": "npm-run-all -p watch-web:*",
-    "watch-web:esbuild": "node esbuild.js --watch",
+    "watch-web:esbuild": "bun esbuild.js --watch",
     "watch-web:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package-web": "npm run check-types && npm run lint && node esbuild.js --production",
+    "package-web": "bun run check-types && bun run lint && bun esbuild.js --production",
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
     "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ."
@@ -46,5 +52,8 @@
     "npm-run-all": "^4.1.5",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "assert": "^2.1.0"
+  },
+  "dependencies": {
+    "vditor": "^3.11.2"
   }
 }
