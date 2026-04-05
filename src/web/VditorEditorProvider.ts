@@ -118,6 +118,9 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
                         preview: {
                            theme: {
                                current: getVditorTheme() === 'dark' ? 'dark' : 'light'
+                           },
+                           math: {
+                               engine: 'MathJax'
                            }
                         },
                         cache: {
