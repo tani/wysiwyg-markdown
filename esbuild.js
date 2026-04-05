@@ -1,5 +1,4 @@
 const esbuild = require('esbuild');
-const glob = require('glob');
 const path = require('path');
 const polyfill = require('@esbuild-plugins/node-globals-polyfill');
 
@@ -45,7 +44,11 @@ const testBundlePlugin = {
 		});
 		build.onLoad({ filter: /[\/\\]extensionTests\.ts$/ }, async args => {
 			const testsRoot = path.join(__dirname, 'src/web/test/suite');
-			const files = await glob.glob('*.test.{ts,tsx}', { cwd: testsRoot, posix: true });
+			const { glob } = require('node:fs/promises');
+			const files = [];
+			for await (const file of glob('*.test.{ts,tsx}', { cwd: testsRoot })) {
+				files.push(file);
+			}
 			return {
 				contents:
 					`export { run } from './mochaTestRunner.ts';` +
