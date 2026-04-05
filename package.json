@@ -3,9 +3,9 @@
   "displayName": "WYSIWYG Markdown",
   "publisher": "masaya",
   "repository": "https://github.com/tani/wysiwyg-markdown",
-  "icon": "icon/icon.png",
+  "icon": "icon.png",
   "description": "A graphical editor for Markdown",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.110.0"
   },
