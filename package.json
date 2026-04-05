@@ -39,19 +39,19 @@
     "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ."
   },
   "devDependencies": {
-    "@types/vscode": "^1.110.0",
-    "@types/mocha": "^10.0.10",
-    "@types/assert": "^1.5.11",
-    "eslint": "^9.39.3",
-    "typescript-eslint": "^8.56.1",
-    "mocha": "^11.7.5",
-    "typescript": "^5.9.3",
-    "@vscode/test-web": "^0.0.80",
-    "esbuild": "^0.27.3",
-    "glob": "^13.0.6",
-    "npm-run-all": "^4.1.5",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
-    "assert": "^2.1.0"
+    "@types/assert": "^1.5.11",
+    "@types/mocha": "^10.0.10",
+    "@types/vscode": "^1.110.0",
+    "@vscode/test-web": "^0.0.80",
+    "assert": "^2.1.0",
+    "esbuild": "^0.28.0",
+    "eslint": "^10.2.0",
+    "glob": "^13.0.6",
+    "mocha": "^11.7.5",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0"
   },
   "dependencies": {
     "vditor": "^3.11.2"
