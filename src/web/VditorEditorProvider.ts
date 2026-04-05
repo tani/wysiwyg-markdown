@@ -111,6 +111,7 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
 
                     vditor = new Vditor('vditor', {
                         cdn: '${vditorUri}',
+                        lang: 'en_US',
                         mode: 'wysiwyg',
                         height: '100vh',
                         theme: getVditorTheme(),
