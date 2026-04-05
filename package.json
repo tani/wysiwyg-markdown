@@ -1,7 +1,7 @@
 {
   "name": "wysiwyg-markdown",
   "displayName": "WYSIWYG Markdown",
-  "publisher": "tani",
+  "publisher": "masaya",
   "repository": "https://github.com/tani/wysiwyg-markdown",
   "icon": "icon/icon.png",
   "description": "A graphical editor for Markdown",
