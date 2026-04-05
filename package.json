@@ -1,6 +1,8 @@
 {
   "name": "wysiwyg-markdown",
   "displayName": "WYSIWYG Markdown",
+  "publisher": "tani",
+  "repository": "https://github.com/tani/wysiwyg-markdown",
   "description": "A graphical editor for Markdown",
   "version": "0.0.1",
   "engines": {
@@ -26,7 +28,7 @@
     ]
   },
   "scripts": {
-    "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/extensionTests.js",
+    "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/extensionTests.js .",
     "pretest": "bun run compile-web",
     "vscode:prepublish": "bun run package-web",
     "compile-web": "bun run check-types && bun run lint && bun esbuild.js",
