@@ -90,7 +90,7 @@ async function main() {
 		],
 	});
 	const vditorDist = path.join(__dirname, 'node_modules', 'vditor', 'dist');
-	const targetVditor = path.join(__dirname, 'dist', 'vditor');
+	const targetVditor = path.join(__dirname, 'dist', 'vditor', 'dist');
 
 	const fs = require('fs');
 
