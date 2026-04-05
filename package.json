@@ -3,6 +3,7 @@
   "displayName": "WYSIWYG Markdown",
   "publisher": "tani",
   "repository": "https://github.com/tani/wysiwyg-markdown",
+  "icon": "icon/icon.png",
   "description": "A graphical editor for Markdown",
   "version": "0.0.1",
   "engines": {
