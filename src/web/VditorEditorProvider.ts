@@ -1,95 +1,102 @@
-import * as vscode from 'vscode';
-import { normalize } from './util';
+import * as vscode from "vscode";
+import { normalize } from "./util";
 
 /**
  * Provider for Vditor editors.
  */
 export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
+  public static register(context: vscode.ExtensionContext): vscode.Disposable {
+    const provider = new VditorEditorProvider(context);
+    const providerRegistration = vscode.window.registerCustomEditorProvider(
+      VditorEditorProvider.viewType,
+      provider,
+    );
+    return providerRegistration;
+  }
 
-    public static register(context: vscode.ExtensionContext): vscode.Disposable {
-        const provider = new VditorEditorProvider(context);
-        const providerRegistration = vscode.window.registerCustomEditorProvider(VditorEditorProvider.viewType, provider);
-        return providerRegistration;
+  private static readonly viewType = "wysiwyg-markdown.vditor";
+
+  constructor(private readonly context: vscode.ExtensionContext) {}
+
+  /**
+   * Called when our custom editor is opened.
+   */
+  public async resolveCustomTextEditor(
+    document: vscode.TextDocument,
+    webviewPanel: vscode.WebviewPanel,
+    _token: vscode.CancellationToken,
+  ): Promise<void> {
+    // Setup initial content for the webview
+    webviewPanel.webview.options = {
+      enableScripts: true,
+    };
+    webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
+
+    let lastKnownContent: string | undefined;
+    function updateWebview() {
+      const currentContent = document.getText();
+      if (
+        lastKnownContent !== undefined &&
+        normalize(currentContent) === normalize(lastKnownContent)
+      ) {
+        return;
+      }
+      lastKnownContent = currentContent;
+      webviewPanel.webview.postMessage({
+        type: "update",
+        text: currentContent,
+      });
     }
 
-    private static readonly viewType = 'wysiwyg-markdown.vditor';
+    let isEditing = false;
+    // Receive message from the webview.
+    webviewPanel.webview.onDidReceiveMessage(async (e) => {
+      switch (e.type) {
+        case "ready":
+          updateWebview();
+          return;
+        case "change":
+          isEditing = true;
+          try {
+            await this.updateTextDocument(document, e.text);
+            lastKnownContent = e.text;
+          } finally {
+            isEditing = false;
+          }
+          return;
+      }
+    });
 
-
-    constructor(
-        private readonly context: vscode.ExtensionContext
-    ) { }
-
-    /**
-     * Called when our custom editor is opened.
-     */
-    public async resolveCustomTextEditor(
-        document: vscode.TextDocument,
-        webviewPanel: vscode.WebviewPanel,
-        _token: vscode.CancellationToken
-    ): Promise<void> {
-        // Setup initial content for the webview
-        webviewPanel.webview.options = {
-            enableScripts: true,
-        };
-        webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
-
-
-        let lastKnownContent: string | undefined;
-        function updateWebview() {
-            const currentContent = document.getText();
-            if (lastKnownContent !== undefined && normalize(currentContent) === normalize(lastKnownContent)) {
-                return;
-            }
-            lastKnownContent = currentContent;
-            webviewPanel.webview.postMessage({
-                type: 'update',
-                text: currentContent,
-            });
+    const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(
+      (e) => {
+        if (isEditing) {
+          return;
         }
+        if (e.document.uri.toString() === document.uri.toString()) {
+          updateWebview();
+        }
+      },
+    );
 
-        let isEditing = false;
-        // Receive message from the webview.
-        webviewPanel.webview.onDidReceiveMessage(async e => {
-            switch (e.type) {
-                case 'ready':
-                    updateWebview();
-                    return;
-                case 'change':
-                    isEditing = true;
-                    try {
-                        await this.updateTextDocument(document, e.text);
-                        lastKnownContent = e.text;
-                    } finally {
-                        isEditing = false;
-                    }
-                    return;
-            }
-        });
+    // Make sure we get rid of the listener when our editor is closed.
+    webviewPanel.onDidDispose(() => {
+      changeDocumentSubscription.dispose();
+    });
+  }
 
-        const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
-            if (isEditing) {
-                return;
-            }
-            if (e.document.uri.toString() === document.uri.toString()) {
-                updateWebview();
-            }
-        });
+  /**
+   * Get the static html used for the editor webviews.
+   */
+  private getHtmlForWebview(webview: vscode.Webview): string {
+    // Local path to Vditor assets (bundled in dist)
+    const vditorDir = vscode.Uri.joinPath(
+      this.context.extensionUri,
+      "dist",
+      "vditor",
+    );
+    const vditorUri = webview.asWebviewUri(vditorDir);
 
-        // Make sure we get rid of the listener when our editor is closed.
-        webviewPanel.onDidDispose(() => {
-            changeDocumentSubscription.dispose();
-        });
-    }
-
-    /**
-     * Get the static html used for the editor webviews.
-     */
-    private getHtmlForWebview(webview: vscode.Webview): string {
-        // Local path to Vditor assets (bundled in dist)
-        const vditorDir = vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'vditor');
-        const vditorUri = webview.asWebviewUri(vditorDir);
-
-        return `
+    return `
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -117,7 +124,7 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
                     ::-webkit-scrollbar-thumb:hover { background: var(--vscode-scrollbarSlider-hoverBackground); }
                 </style>
             </head>
-            <body class="${vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark ? 'vscode-dark' : 'vscode-light'}">
+            <body class="${vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark ? "vscode-dark" : "vscode-light"}">
                 <div id="vditor"></div>
                 <script>
                     const vscode = acquireVsCodeApi();
@@ -131,7 +138,7 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
                     vditor = new Vditor('vditor', {
                         cdn: '${vditorUri}',
                         lang: 'en_US',
-                        mode: 'wysiwyg',
+                        mode: 'ir',
                         height: '100vh',
                         theme: getVditorTheme(),
                         preview: {
@@ -175,19 +182,20 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
                 </script>
             </body>
             </html>`;
-    }
+  }
 
-    /**
-     * Write out the text to a document.
-     */
-    private updateTextDocument(document: vscode.TextDocument, text: string) {
-        const edit = new vscode.WorkspaceEdit();
+  /**
+   * Write out the text to a document.
+   */
+  private updateTextDocument(document: vscode.TextDocument, text: string) {
+    const edit = new vscode.WorkspaceEdit();
 
-        edit.replace(
-            document.uri,
-            new vscode.Range(0, 0, document.lineCount, 0),
-            text);
+    edit.replace(
+      document.uri,
+      new vscode.Range(0, 0, document.lineCount, 0),
+      text,
+    );
 
-        return vscode.workspace.applyEdit(edit);
-    }
+    return vscode.workspace.applyEdit(edit);
+  }
 }
