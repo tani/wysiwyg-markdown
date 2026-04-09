@@ -4,6 +4,11 @@ All notable changes to the "wysiwyg-markdown" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.2.3] - 2026-04-09
+
+- Feature: Changed default Vditor mode to `ir` (Instant Rendering) for a smoother editing experience.
+- Style: Code formatting and styling improvements in `VditorEditorProvider.ts`.
+
 ## [0.2.2] - 2026-04-09
 
 - Fix: Prevent cursor reset when VS Code Auto Save is enabled.
