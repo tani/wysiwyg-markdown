@@ -7,15 +7,14 @@ suite('Utility Test Suite', () => {
         assert.strictEqual(normalize('line1\r\nline2\r\nline3'), 'line1\nline2\nline3');
     });
 
-    test('normalize should remove single trailing newline', () => {
+    test('normalize should remove trailing newlines', () => {
         assert.strictEqual(normalize('text\n'), 'text');
         assert.strictEqual(normalize('text\r\n'), 'text');
     });
 
-    test('normalize should not remove multiple trailing newlines', () => {
-        // Only one \n is removed from the end
-        assert.strictEqual(normalize('text\n\n'), 'text\n');
-        assert.strictEqual(normalize('text\r\n\r\n'), 'text\n');
+    test('normalize should remove multiple trailing newlines', () => {
+        assert.strictEqual(normalize('text\n\n'), 'text');
+        assert.strictEqual(normalize('text\r\n\r\n'), 'text');
     });
 
     test('normalize should handle empty string', () => {

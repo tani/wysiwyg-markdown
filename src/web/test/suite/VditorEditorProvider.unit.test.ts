@@ -74,6 +74,15 @@ suite('VditorEditorProvider Unit Test Suite', () => {
         }
         assert.strictEqual(postMessageCount, 1, 'External change should trigger webview update');
         assert.strictEqual(lastMessage.text, '# Changed Externally');
+
+        // 4. Simulate auto-save style change (e.g. adding trailing newline that matches after normalization)
+        postMessageCount = 0;
+        const autoSaveEdit = new vscode.WorkspaceEdit();
+        autoSaveEdit.replace(uri, new vscode.Range(0, 0, document.lineCount, 0), '# Changed Externally\n\n');
+        await vscode.workspace.applyEdit(autoSaveEdit);
+        
+        await new Promise(r => setTimeout(r, 100));
+        assert.strictEqual(postMessageCount, 0, 'Auto-save (normalization match) should NOT trigger webview update');
         
         // Cleanup
         try {

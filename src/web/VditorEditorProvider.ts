@@ -34,10 +34,16 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
         webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
 
+        let lastKnownContent: string | undefined;
         function updateWebview() {
+            const currentContent = document.getText();
+            if (lastKnownContent !== undefined && normalize(currentContent) === normalize(lastKnownContent)) {
+                return;
+            }
+            lastKnownContent = currentContent;
             webviewPanel.webview.postMessage({
                 type: 'update',
-                text: document.getText(),
+                text: currentContent,
             });
         }
 
@@ -52,6 +58,7 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
                     isEditing = true;
                     try {
                         await this.updateTextDocument(document, e.text);
+                        lastKnownContent = e.text;
                     } finally {
                         isEditing = false;
                     }

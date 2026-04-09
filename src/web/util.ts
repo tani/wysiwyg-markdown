@@ -10,5 +10,5 @@
  * @returns The normalized string.
  */
 export function normalize(str: string): string {
-    return str.replace(/\r\n/g, '\n').replace(/\n$/, '');
+    return str.replace(/\r\n/g, '\n').replace(/\n+$/, '');
 }
