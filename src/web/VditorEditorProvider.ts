@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { normalize } from './util';
 
 /**
  * Provider for Vditor editors.
@@ -12,6 +13,7 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
     }
 
     private static readonly viewType = 'wysiwyg-markdown.vditor';
+
 
     constructor(
         private readonly context: vscode.ExtensionContext
@@ -31,6 +33,7 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
         };
         webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
+
         function updateWebview() {
             webviewPanel.webview.postMessage({
                 type: 'update',
@@ -38,19 +41,28 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
             });
         }
 
+        let isEditing = false;
         // Receive message from the webview.
-        webviewPanel.webview.onDidReceiveMessage(e => {
+        webviewPanel.webview.onDidReceiveMessage(async e => {
             switch (e.type) {
                 case 'ready':
                     updateWebview();
                     return;
                 case 'change':
-                    this.updateTextDocument(document, e.text);
+                    isEditing = true;
+                    try {
+                        await this.updateTextDocument(document, e.text);
+                    } finally {
+                        isEditing = false;
+                    }
                     return;
             }
         });
 
         const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
+            if (isEditing) {
+                return;
+            }
             if (e.document.uri.toString() === document.uri.toString()) {
                 updateWebview();
             }
@@ -143,7 +155,9 @@ export class VditorEditorProvider implements vscode.CustomTextEditorProvider {
                         switch (message.type) {
                             case 'update':
                                 const text = message.text;
-                                if (vditor.getValue() !== text) {
+                                // Normalize line endings and trailing newlines for comparison
+                                const normalize = ${normalize.toString()};
+                                if (normalize(vditor.getValue()) !== normalize(text)) {
                                     isUpdating = true;
                                     vditor.setValue(text);
                                     isUpdating = false;
