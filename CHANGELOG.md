@@ -4,6 +4,12 @@ All notable changes to the "wysiwyg-markdown" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.2.2] - 2026-04-09
+
+- Fix: Prevent cursor reset when VS Code Auto Save is enabled.
+- Fix: Skip redundant updates in the extension host using content-based filtering.
+- Test: Add test case for auto-save scenario in provider unit tests.
+
 ## [0.2.1] - 2026-04-09
 
 - Fix: Prevent cursor reset while typing by breaking the circular update loop.
