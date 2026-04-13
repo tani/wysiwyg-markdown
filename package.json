@@ -5,6 +5,7 @@
   "repository": "https://github.com/tani/wysiwyg-markdown",
   "icon": "icon.png",
   "description": "A graphical editor for Markdown",
+  "license": "MIT",
   "version": "0.2.3",
   "engines": {
     "vscode": "^1.110.0"
