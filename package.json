@@ -6,9 +6,9 @@
   "icon": "icon.png",
   "description": "A graphical editor for Markdown",
   "license": "MIT",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "engines": {
-    "vscode": "^1.110.0"
+    "vscode": "^1.107.0"
   },
   "categories": [
     "Other"
@@ -46,7 +46,7 @@
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@types/assert": "^1.5.11",
     "@types/mocha": "^10.0.10",
-    "@types/vscode": "^1.110.0",
+    "@types/vscode": "^1.107.0",
     "@vscode/test-web": "^0.0.80",
     "assert": "^2.1.0",
     "esbuild": "^0.28.0",
